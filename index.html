@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Job, Quote & Invoice</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef1f3;--surface:#fff;--ink:#14283b;--mute:#5b6b7a;--line:#cfd7de;--accent:#14283b;--on-accent:#fff;--brass:#a9772a;--danger:#a63a2b;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1a25;--surface:#182736;--ink:#e8eef3;--mute:#9fb0be;--line:#2c3f50;--accent:#d9a85a;--on-accent:#14283b;--brass:#d9a85a;--danger:#e57a6a}}
+:root[data-theme="dark"]{--bg:#0f1a25;--surface:#182736;--ink:#e8eef3;--mute:#9fb0be;--line:#2c3f50;--accent:#d9a85a;--on-accent:#14283b;--brass:#d9a85a;--danger:#e57a6a}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.4 -apple-system,"Helvetica Neue",Arial,sans-serif}
+h1,h2,h3{font-family:"Barlow Semi Condensed","Arial Narrow",Arial,sans-serif;margin:0}
+header{background:var(--surface);border-bottom:1px solid var(--line);position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--surface);z-index:10}
+.bar{display:flex;align-items:center;justify-content:space-between;padding:10px 16px}
+.bar h1{font-size:24px}
+nav{display:flex;gap:4px;overflow-x:auto;padding:0 12px 8px}
+nav button{flex:0 0 auto;border:0;background:none;color:var(--mute);font:600 17px "Barlow Semi Condensed",Arial,sans-serif;padding:10px 14px;border-radius:8px;min-height:44px}
+nav button.on{background:var(--accent);color:var(--on-accent)}
+main{max-width:900px;margin:0 auto;padding:16px}
+section{display:none}section.on{display:block}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+.card h2{font-size:22px;margin-bottom:10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+label{display:block;font-size:15px;color:var(--mute);font-weight:600}
+input,select,textarea{display:block;width:100%;margin-top:4px;min-height:48px;padding:10px 12px;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px}
+textarea{min-height:110px;resize:vertical}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:3px solid var(--brass);outline-offset:1px}
+.btn{border:0;background:var(--accent);color:var(--on-accent);font:700 18px "Barlow Semi Condensed",Arial,sans-serif;padding:12px 20px;border-radius:8px;min-height:48px;cursor:pointer}
+.btn.alt{background:none;color:var(--ink);border:1px solid var(--line)}
+.btn.del{background:none;color:var(--danger);border:1px solid var(--line);padding:8px 14px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:14px}
+.ph{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--bg)}
+.ph img{width:100%;height:160px;object-fit:cover;display:block}
+.ph div{padding:8px}
+.ph input{min-height:40px;font-size:16px}
+.item{display:grid;grid-template-columns:1fr;gap:8px;border-bottom:1px solid var(--line);padding:12px 0}
+.item .n{display:grid;grid-template-columns:80px 120px 1fr auto;gap:8px;align-items:end}
+.tot{text-align:right;font-size:20px;font-weight:700}
+.job{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}
+.job b{display:block}.job span{color:var(--mute);font-size:15px}
+.msg{color:var(--mute);font-size:15px;margin:8px 0 0}
+/* paper document: always light */
+#doc{background:#fff;color:#14283b;border:1px solid var(--line);border-radius:4px;padding:32px;margin-top:12px}
+#doc h2{font-size:34px;letter-spacing:.5px}
+#doc table{width:100%;border-collapse:collapse;margin:18px 0}
+#doc th{text-align:left;border-bottom:2px solid #14283b;padding:6px 4px;font-size:14px}
+#doc td{padding:8px 4px;border-bottom:1px solid #d5dbe0;vertical-align:top}
+#doc .r{text-align:right;white-space:nowrap}
+#doc .sum{margin-left:auto;width:min(320px,100%)}
+#doc .sum div{display:flex;justify-content:space-between;padding:4px 0}
+#doc .big{font-weight:700;font-size:20px;border-top:2px solid #14283b;margin-top:4px;padding-top:8px!important}
+#doc .two{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-top:14px}
+#doc .imgs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px}
+#doc .imgs img{width:100%;height:130px;object-fit:cover}
+#doc small{color:#5b6b7a}
+@media (max-width:640px){.item .n{grid-template-columns:1fr 1fr}}
+@media print{body::before,header,.noprint{display:none!important}body{background:#fff}main{padding:0;max-width:none}section{display:none!important}section#s-doc{display:block!important}#doc{border:0;padding:0;margin:0}}
+</style>
+</head>
+<body>
+<header>
+ <div class="bar"><h1 id="ttl">New job</h1><div class="row"><button class="btn alt" id="bNew">New job</button><button class="btn" id="bSave">Save job</button></div></div>
+ <nav id="nav">
+  <button data-t="saved">Saved jobs</button><button data-t="job" class="on">Customer & job</button><button data-t="photos">Photos</button><button data-t="items">Pricing</button><button data-t="quote">Quote</button><button data-t="deposit">Deposit invoice</button><button data-t="invoice">Final invoice</button><button data-t="me">My details</button>
+ </nav>
+</header>
+<main>
+<section id="s-saved"><div class="card"><h2>Saved jobs</h2><div id="jobs"></div><p class="msg" id="jmsg"></p></div>
+<div class="card"><h2>Backup & move jobs</h2><div class="row"><button class="btn" id="bExp">Export backup</button><button class="btn alt" id="bImp">Import file</button><button class="btn alt" id="bPaste">Paste text</button></div>
+<input type="file" id="fImp" accept=".json,application/json" hidden>
+<textarea id="bk" hidden placeholder="Backup text" style="margin-top:12px"></textarea><button class="btn" id="bkb" hidden style="margin-top:8px">Import this text</button>
+<p class="msg">Export saves all your jobs, photos and business details. Import adds them to this page. If no file downloads, copy the text that appears and use Paste text on the other page.</p></div></section>
+
+<section id="s-job" class="on">
+ <div class="card"><h2>Customer</h2><div class="grid">
+  <label>Name<input data-k="c.name" autocomplete="off"></label>
+  <label>Phone<input data-k="c.phone" type="tel"></label>
+  <label>Email<input data-k="c.email" type="email"></label>
+  <label>Address<input data-k="c.addr"></label>
+ </div></div>
+ <div class="card"><h2>Project</h2><div class="grid">
+  <label>Type of work<select data-k="b.type"><option value="">Choose…</option><option>Bimini top</option><option>Boat hood / cover</option><option>Tonneau cover</option><option>Dodger</option><option>Boat seats</option><option>Indoor seat</option><option>Bench</option><option>Repair</option><option>Other</option></select></label>
+  <label>Boat / item (make, model, length)<input data-k="b.boat"></label>
+  <label>Fabric / material<input data-k="mat" placeholder="e.g. Sunbrella, black"></label>
+  <label>Needed by<input data-k="needby" type="date"></label>
+ </div>
+ <label style="margin-top:12px">Description of the job<textarea data-k="desc" placeholder="What the customer wants, existing condition, fittings, zips, windows…"></textarea></label>
+ <label style="margin-top:12px">Measurements<textarea data-k="meas" placeholder="Width, length, height, frame details…"></textarea></label>
+ </div>
+</section>
+
+<section id="s-photos"><div class="card"><h2>Photos</h2>
+ <div class="row"><button class="btn" id="bCam">Take photo</button><button class="btn alt" id="bLib">Add from library</button></div>
+ <input type="file" id="fCam" accept="image/*" capture="environment" hidden>
+ <input type="file" id="fLib" accept="image/*" multiple hidden>
+ <p class="msg">Add a short note under each photo. Photos can be included on the quote.</p>
+ <div class="photos" id="photos"></div></div></section>
+
+<section id="s-items"><div class="card"><h2>Line items</h2>
+ <div id="items"></div>
+ <div class="row" style="margin-top:12px"><button class="btn alt" id="bAdd">Add item</button></div></div>
+ <div class="card"><h2>Totals</h2><div class="grid">
+  <label>Tax / GST / VAT rate (%)<input data-k="tax" type="number" inputmode="decimal" step="0.1"></label>
+  <label>Deposit<select data-k="depType"><option value="none">No deposit</option><option value="percent">Percentage of total</option><option value="amount">Fixed amount</option></select></label>
+  <label>Deposit value (% or amount)<input data-k="depVal" type="number" inputmode="decimal" step="0.01"></label>
+  <label>Deposit received?<select data-k="depPaid"><option value="no">Not yet</option><option value="yes">Yes, paid</option></select></label>
+  <label>Planned start date<input data-k="startDate" type="date"></label>
+  <label>Deposit invoice number<input data-k="dno"></label>
+  <label>Deposit due date<input data-k="depDue" type="date"></label>
+  <label>Other payments received<input data-k="paid" type="number" inputmode="decimal" step="0.01"></label>
+  <label>Quote number<input data-k="qno"></label>
+  <label>Invoice number<input data-k="ino"></label>
+  <label>Date<input data-k="date" type="date"></label>
+  <label>Invoice due date<input data-k="due" type="date"></label>
+ </div>
+ <label style="margin-top:12px">Notes on the quote / invoice<textarea data-k="notes" placeholder="Lead time, warranty, exclusions…"></textarea></label>
+ <p class="tot" id="sumline"></p></div></section>
+
+<section id="s-doc"><div class="card noprint"><div class="row"><button class="btn" id="bPrint">Print / save as PDF</button><label style="display:flex;align-items:center;gap:8px;margin:0"><input type="checkbox" id="inclPh" style="width:24px;min-height:24px;margin:0"> Include photos</label></div>
+ <p class="msg">Tip: on iPad, Print then pinch-out on the preview to get a PDF you can share.</p></div>
+ <div id="doc"></div></section>
+
+<section id="s-me"><div class="card"><h2>My business details</h2><div class="grid">
+  <label>Business name<input data-b="name"></label>
+  <label>Phone<input data-b="phone" type="tel"></label>
+  <label>Email<input data-b="email" type="email"></label>
+  <label>Address<input data-b="addr"></label>
+  <label>Tax / business number<input data-b="taxno"></label>
+  <label>Currency symbol<input data-b="cur" maxlength="3"></label>
+ </div>
+ <label style="margin-top:12px">Payment details (bank, etc.)<textarea data-b="pay"></textarea></label>
+ <label style="margin-top:12px">Terms<textarea data-b="terms"></textarea></label>
+ <p class="msg">Saved automatically on this iPad.</p></div></section>
+</main>
+
+<script>
+const $=s=>document.querySelector(s);
+const today=()=>new Date().toISOString().slice(0,10);
+const ld=k=>{try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}};
+const sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){return false}};
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const blank=()=>{const n=Date.now().toString().slice(-6);return{id:Date.now()+'',c:{},b:{},desc:'',meas:'',mat:'',photos:[],items:[{d:'',q:1,p:0}],tax:0,paid:0,depType:'none',depVal:0,depPaid:'no',startDate:'',depDue:'',dno:'DEP-'+n,qno:'Q-'+n,ino:'INV-'+n,date:today(),due:'',notes:''}};
+let S=blank();
+let B=Object.assign({name:'',phone:'',email:'',addr:'',taxno:'',cur:'$',pay:'',terms:'Quote valid for 30 days. A deposit is required to begin work.'},ld('biz')||{});
+const get=(o,p)=>p.split('.').reduce((a,k)=>a&&a[k],o);
+const set=(o,p,v)=>{const a=p.split('.');const l=a.pop();let t=o;a.forEach(k=>t=t[k]=t[k]||{});t[l]=v};
+const money=n=>(B.cur||'')+(n||0).toFixed(2);
+
+function fill(){document.querySelectorAll('[data-k]').forEach(e=>{const v=get(S,e.dataset.k);e.value=v==null?'':v});
+ document.querySelectorAll('[data-b]').forEach(e=>e.value=B[e.dataset.b]||'');
+ $('#ttl').textContent=S.c.name?S.c.name+(S.b.type?' – '+S.b.type:''):'New job';
+ renderItems();renderPhotos();}
+document.addEventListener('input',e=>{const t=e.target;
+ if(t.dataset.k){let v=t.value;if(t.type==='number')v=parseFloat(v)||0;set(S,t.dataset.k,v);if(t.dataset.k==='c.name'||t.dataset.k==='b.type')$('#ttl').textContent=S.c.name?S.c.name+(S.b.type?' – '+S.b.type:''):'New job';sums()}
+ if(t.dataset.b){B[t.dataset.b]=t.value;sv('biz',B);sums()}});
+
+function totals(){const sub=S.items.reduce((a,i)=>a+(+i.q||0)*(+i.p||0),0);const tax=sub*(+S.tax||0)/100;const tot=sub+tax;const v=+S.depVal||0;const dep=Math.max(0,Math.min(tot,S.depType==='percent'?tot*v/100:S.depType==='amount'?v:0));const rec=(S.depPaid==='yes'?dep:0)+(+S.paid||0);return{sub,tax,tot,dep,rec,left:tot-dep,bal:tot-rec}}
+function sums(){const t=totals();$('#sumline').textContent='Total '+money(t.tot)+(t.dep?'  ·  Deposit '+money(t.dep):'')+(t.rec?'  ·  Balance '+money(t.bal):'')}
+
+function renderItems(){
+ $('#items').innerHTML=S.items.map((it,i)=>`<div class="item"><label>Description<input data-i="${i}" data-f="d" value="${esc(it.d)}" placeholder="e.g. Bimini top, 4 bow, Sunbrella"></label>
+ <div class="n"><label>Qty<input data-i="${i}" data-f="q" type="number" inputmode="decimal" value="${it.q}"></label><label>Unit price<input data-i="${i}" data-f="p" type="number" inputmode="decimal" step="0.01" value="${it.p}"></label><div class="tot">${money((+it.q||0)*(+it.p||0))}</div><button class="btn del" data-del="${i}">Remove</button></div></div>`).join('');
+ sums();}
+$('#items').addEventListener('input',e=>{const t=e.target;if(t.dataset.f){const it=S.items[t.dataset.i];it[t.dataset.f]=t.dataset.f==='d'?t.value:(parseFloat(t.value)||0);const tt=t.closest('.item').querySelector('.tot');tt.textContent=money((+it.q||0)*(+it.p||0));sums()}});
+$('#items').addEventListener('click',e=>{if(e.target.dataset.del!=null){S.items.splice(e.target.dataset.del,1);if(!S.items.length)S.items.push({d:'',q:1,p:0});renderItems()}});
+$('#bAdd').onclick=()=>{S.items.push({d:'',q:1,p:0});renderItems()};
+
+function renderPhotos(){$('#photos').innerHTML=S.photos.length?S.photos.map((p,i)=>`<div class="ph"><img src="${p.src}" alt=""><div><input data-pc="${i}" value="${esc(p.cap)}" placeholder="Note about this photo"><button class="btn del" data-pd="${i}" style="margin-top:6px;width:100%">Remove</button></div></div>`).join(''):'<p class="msg">No photos yet.</p>'}
+$('#photos').addEventListener('input',e=>{if(e.target.dataset.pc!=null)S.photos[e.target.dataset.pc].cap=e.target.value});
+$('#photos').addEventListener('click',e=>{if(e.target.dataset.pd!=null){S.photos.splice(e.target.dataset.pd,1);renderPhotos()}});
+function addPhoto(f){return new Promise(r=>{const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{const m=1000,s=Math.min(1,m/Math.max(im.width,im.height));const c=document.createElement('canvas');c.width=im.width*s;c.height=im.height*s;c.getContext('2d').drawImage(im,0,0,c.width,c.height);S.photos.push({src:c.toDataURL('image/jpeg',.7),cap:''});r()};im.src=fr.result};fr.readAsDataURL(f)})}
+async function pick(e){for(const f of e.target.files)await addPhoto(f);e.target.value='';renderPhotos()}
+$('#fCam').onchange=pick;$('#fLib').onchange=pick;
+$('#bCam').onclick=()=>$('#fCam').click();$('#bLib').onclick=()=>$('#fLib').click();
+
+function doc(kind){if(kind==='deposit')return depDoc();const t=totals(),q=kind==='quote';
+ const rows=S.items.filter(i=>i.d||i.p).map(i=>`<tr><td>${esc(i.d)}</td><td class="r">${i.q}</td><td class="r">${money(+i.p)}</td><td class="r">${money((+i.q||0)*(+i.p||0))}</td></tr>`).join('');
+ const ph=$('#inclPh').checked&&S.photos.length?`<div class="imgs">${S.photos.map(p=>`<figure style="margin:0"><img src="${p.src}" alt=""><small>${esc(p.cap)}</small></figure>`).join('')}</div>`:'';
+ $('#doc').innerHTML=`<div class="two"><div><h2>${q?'QUOTE':'INVOICE'}</h2><small>${esc(q?S.qno:S.ino)}</small></div>
+ <div style="text-align:right"><b>${esc(B.name)||'Your business name'}</b><br>${esc(B.addr)}<br>${esc(B.phone)} ${esc(B.email)}<br>${B.taxno?'Tax no. '+esc(B.taxno):''}</div></div>
+ <div class="two"><div><small>Prepared for</small><br><b>${esc(S.c.name)}</b><br>${esc(S.c.addr)}<br>${esc(S.c.phone)} ${esc(S.c.email)}</div>
+ <div style="text-align:right"><small>Date</small> ${esc(S.date)}${!q&&S.due?`<br><small>Due</small> ${esc(S.due)}`:''}</div></div>
+ <p style="margin-top:18px"><b>${esc(S.b.type)}</b>${S.b.boat?' – '+esc(S.b.boat):''}${S.mat?'<br><small>Material:</small> '+esc(S.mat):''}</p>
+ ${S.desc?`<p style="white-space:pre-wrap">${esc(S.desc)}</p>`:''}
+ <table><tr><th>Item</th><th class="r">Qty</th><th class="r">Price</th><th class="r">Amount</th></tr>${rows}</table>
+ <div class="sum"><div><span>Subtotal</span><span>${money(t.sub)}</span></div>${S.tax?`<div><span>Tax (${S.tax}%)</span><span>${money(t.tax)}</span></div>`:''}
+ <div class="${(q&&!t.dep)||(!q&&!t.rec)?'big':''}"><span>Total</span><span>${money(t.tot)}</span></div>
+ ${q?(t.dep?`<div><span>Deposit to secure start date</span><span>${money(t.dep)}</span></div><div class="big"><span>Balance on completion</span><span>${money(t.left)}</span></div>`:''):(t.rec?`${S.depPaid==='yes'&&t.dep?`<div><span>Deposit received</span><span>${money(t.dep)}</span></div>`:''}${+S.paid?`<div><span>Other payments</span><span>${money(+S.paid)}</span></div>`:''}<div class="big"><span>Balance due</span><span>${money(t.bal)}</span></div>`:'')}</div>
+ ${q&&t.dep?`<p><b>To secure your start date:</b> a deposit of ${money(t.dep)} is required${S.startDate?' for a planned start of '+esc(S.startDate):''}. Your start date is confirmed once the deposit is received.</p>`:''}${S.notes?`<p style="white-space:pre-wrap">${esc(S.notes)}</p>`:''}
+ ${!q&&B.pay?`<p><b>Payment details</b><br><span style="white-space:pre-wrap">${esc(B.pay)}</span></p>`:''}
+ ${q&&B.terms?`<p><small style="white-space:pre-wrap">${esc(B.terms)}</small></p>`:''}${ph}`;}
+
+function depDoc(){const t=totals();
+ $('#doc').innerHTML=`<div class="two"><div><h2>DEPOSIT INVOICE</h2><small>${esc(S.dno)}</small></div>
+ <div style="text-align:right"><b>${esc(B.name)||'Your business name'}</b><br>${esc(B.addr)}<br>${esc(B.phone)} ${esc(B.email)}<br>${B.taxno?'Tax no. '+esc(B.taxno):''}</div></div>
+ <div class="two"><div><small>Prepared for</small><br><b>${esc(S.c.name)}</b><br>${esc(S.c.addr)}<br>${esc(S.c.phone)} ${esc(S.c.email)}</div>
+ <div style="text-align:right"><small>Date</small> ${esc(S.date)}${S.depDue?`<br><small>Due</small> ${esc(S.depDue)}`:''}</div></div>
+ ${t.dep?`<table><tr><th>Description</th><th class="r">Amount</th></tr><tr><td>Deposit for ${esc(S.b.type)||'work'}${S.b.boat?' – '+esc(S.b.boat):''}<br><small>Quote ${esc(S.qno)} · job total ${money(t.tot)}</small></td><td class="r">${money(t.dep)}</td></tr></table>
+ <div class="sum"><div class="big"><span>${S.depPaid==='yes'?'Deposit paid':'Deposit due'}</span><span>${money(t.dep)}</span></div></div>
+ <p>${S.depPaid==='yes'?'<b>Received with thanks.</b> ':''}${S.startDate?'Your start date of <b>'+esc(S.startDate)+'</b> is secured once this deposit is received.':'Your start date is secured once this deposit is received.'} The balance of ${money(t.left)} is due on completion.</p>`:'<p>No deposit has been set for this job. Choose one on the Pricing tab.</p>'}
+ ${B.pay?`<p><b>Payment details</b><br><span style="white-space:pre-wrap">${esc(B.pay)}</span></p>`:''}`}
+let tab='job';
+function show(t){tab=t;document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
+ document.querySelectorAll('section').forEach(s=>s.classList.remove('on'));
+ const quote=t==='quote'||t==='invoice'||t==='deposit';$(quote?'#s-doc':'#s-'+t).classList.add('on');
+ if(quote)doc(t);if(t==='saved')list();window.scrollTo(0,0)}
+$('#nav').onclick=e=>{if(e.target.dataset.t)show(e.target.dataset.t)};
+$('#inclPh').onchange=()=>doc(tab);
+$('#bPrint').onclick=()=>window.print();
+
+function list(){const j=ld('jobs')||{};const ks=Object.keys(j).sort().reverse();
+ $('#jobs').innerHTML=ks.length?ks.map(k=>`<div class="job"><div><b>${esc(j[k].c.name)||'Unnamed customer'}</b><span>${esc(j[k].b.type||'')} ${esc(j[k].date||'')}</span></div><div class="row"><button class="btn" data-open="${k}">Open</button><button class="btn del" data-rm="${k}">Delete</button></div></div>`).join(''):'<p class="msg">No saved jobs yet. Fill in a job and tap Save job.</p>'}
+$('#jobs').addEventListener('click',e=>{const j=ld('jobs')||{};
+ if(e.target.dataset.open){S=Object.assign(blank(),j[e.target.dataset.open]);fill();show('job')}
+ if(e.target.dataset.rm&&confirm('Delete this job?')){delete j[e.target.dataset.rm];sv('jobs',j);list()}});
+$('#bSave').onclick=()=>{const j=ld('jobs')||{};j[S.id]=S;const ok=sv('jobs',j);$('#jmsg').textContent=ok?'':'';
+ const b=$('#bSave');b.textContent=ok?'Saved':'Storage full – remove photos';setTimeout(()=>b.textContent='Save job',2000)};
+$('#bNew').onclick=()=>{if(confirm('Start a new job? Unsaved changes will be lost.')){S=blank();fill();show('job')}};
+$('#bExp').onclick=()=>{const d=JSON.stringify({v:1,jobs:ld('jobs')||{},biz:ld('biz')||B});$('#bk').value=d;$('#bk').hidden=false;$('#bkb').hidden=true;
+ try{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([d],{type:'application/json'}));a.download='jobs-backup-'+today()+'.json';document.body.appendChild(a);a.click();a.remove()}catch(e){}
+ $('#jmsg').textContent='Backup ready. If a file did not download, copy the text in the box below instead.'};
+function imp(txt){try{const d=JSON.parse(txt);if(!d||!d.jobs)throw 0;const j=ld('jobs')||{};Object.assign(j,d.jobs);if(!sv('jobs',j))throw 1;if(d.biz){B=Object.assign(B,d.biz);sv('biz',B)}fill();list();$('#jmsg').textContent='Imported '+Object.keys(d.jobs).length+' job(s).'}catch(e){$('#jmsg').textContent='That backup could not be read, or there is not enough storage.'}}
+$('#bImp').onclick=()=>$('#fImp').click();
+$('#fImp').onchange=e=>{const f=e.target.files[0];if(f){const r=new FileReader();r.onload=()=>imp(r.result);r.readAsText(f)}e.target.value=''};
+$('#bPaste').onclick=()=>{$('#bk').hidden=false;$('#bkb').hidden=false;$('#bk').value='';$('#bk').focus()};
+$('#bkb').onclick=()=>imp($('#bk').value);
+fill();
+</script>
+</body>
+</html>
